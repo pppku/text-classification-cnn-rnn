@@ -48,7 +48,7 @@ def read_file(filename):
             try:
                 label, content = line.strip().split('\t')
                 if content:
-                    contents.append(list(native_content(content)))
+                    contents.append(list(native_content(content)))    # 把str转换为list
                     labels.append(native_content(label))
             except:
                 pass
@@ -56,7 +56,7 @@ def read_file(filename):
 
 
 def build_vocab(train_dir, vocab_dir, vocab_size=5000):
-    """根据训练集构建词汇表，存储"""
+    """根据训练集构建词汇表，存储，词汇表大小为vocab_size - 1"""
     data_train, _ = read_file(train_dir)
 
     all_data = []
@@ -72,7 +72,7 @@ def build_vocab(train_dir, vocab_dir, vocab_size=5000):
 
 
 def read_vocab(vocab_dir):
-    """读取词汇表"""
+    """读取词汇表，返回words list和word_id字典"""
     # words = open_file(vocab_dir).read().strip().split('\n')
     with open_file(vocab_dir) as fp:
         # 如果是py2 则每个值都转化为unicode

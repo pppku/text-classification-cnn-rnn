@@ -196,5 +196,7 @@ if __name__ == '__main__':
 
     if sys.argv[1] == 'train':
         train()
-    else:
+    elif sys.argv[1] == 'test':
         test()
+    else:
+        raise ValueError("""usage: python run_rnn.py [train / test]""")

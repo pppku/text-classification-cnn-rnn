@@ -15,14 +15,14 @@ from sklearn import metrics
 from cnn_model import TCNNConfig, TextCNN
 from data.cnews_loader import read_vocab, read_category, batch_iter, process_file, build_vocab
 
-base_dir = 'data/cnews'
-train_dir = os.path.join(base_dir, 'cnews.train.txt')
-test_dir = os.path.join(base_dir, 'cnews.test.txt')
-val_dir = os.path.join(base_dir, 'cnews.val.txt')
-vocab_dir = os.path.join(base_dir, 'cnews.vocab.txt')
+base_dir = 'data/cnews'                                     # 文件基地址
+train_dir = os.path.join(base_dir, 'cnews.train.txt')       # 训练集地址 os.path.join() python路径拼接
+test_dir = os.path.join(base_dir, 'cnews.test.txt')         # 测试集地址
+val_dir = os.path.join(base_dir, 'cnews.val.txt')           # 验证集地址
+vocab_dir = os.path.join(base_dir, 'cnews.vocab.txt')       # 单词表地址 用于存储频率最高的{config.vocab_size - 1}个单词
 
-save_dir = 'checkpoints/textcnn'
-save_path = os.path.join(save_dir, 'best_validation')  # 最佳验证结果保存路径
+save_dir = 'checkpoints/textcnn'                            # checkpoint地址
+save_path = os.path.join(save_dir, 'best_validation')       # 最佳验证结果保存路径
 
 
 def get_time_dif(start_time):
@@ -187,15 +187,17 @@ if __name__ == '__main__':
         raise ValueError("""usage: python run_cnn.py [train / test]""")
 
     print('Configuring CNN model...')
-    config = TCNNConfig()
-    if not os.path.exists(vocab_dir):  # 如果不存在词汇表，重建
+    config = TCNNConfig()              # 读取配置文件
+    if not os.path.exists(vocab_dir):  # 如果不存在词汇表，用train_dir中频率最高的vocab_size-1个词构建词汇表
         build_vocab(train_dir, vocab_dir, config.vocab_size)
-    categories, cat_to_id = read_category()
-    words, word_to_id = read_vocab(vocab_dir)
-    config.vocab_size = len(words)
+    categories, cat_to_id = read_category()  # 读分类list 和 分类-id 字典
+    words, word_to_id = read_vocab(vocab_dir)  # 读词汇表list 和 words-id 字典
+    config.vocab_size = len(words)     # 词汇表大小重新设定
     model = TextCNN(config)
 
     if sys.argv[1] == 'train':
         train()
-    else:
+    elif sys.argv[1] == 'test':
         test()
+    else:
+        raise ValueError("""usage: python run_cnn.py [train / test]""")
